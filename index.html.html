@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program Kerja Manager</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS yang sudah ada */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f6f7fb;
+            min-height: 100vh;
+            padding: 0;
+            color: #212529;
+        }
+        .container {
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        .header {
+            background: #0d6efd;
+            color: #fff;
+            border-radius: 1rem 1rem 0 0;
+        }
+        .header h1, .header p, .header .lead, .header .small {
+            color: #fff;
+        }
+        .main-content {
+            padding: 18px 8px 8px 8px;
+        }
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: none;
+        }
+        .stat-card {
+            border-left: 5px solid #e9ecef;
+            background: #fff;
+        }
+        .stat-card.programs { border-left-color: #0d6efd; }
+        .stat-card.budget { border-left-color: #20c997; }
+        .stat-card.divisions { border-left-color: #fd7e14; }
+        .stat-card.status-belum-dimulai { border-left-color: #adb5bd; }
+        .stat-card.status-sedang-berjalan { border-left-color: #0d6efd; }
+        .stat-card.status-selesai { border-left-color: #198754; }
+        .stat-number {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #212529;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+        .form-label {
+            color: #212529;
+            font-weight: 600;
+        }
+        .form-control, .form-select {
+            border-radius: 0.5rem;
+            font-size: 1em;
+            color: #212529;
+            background: #fff;
+        }
+        .form-control::placeholder {
+            color: #adb5bd;
+            opacity: 1;
+        }
+        .btn {
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        .btn-primary, .btn-success, .btn-danger, .btn-warning {
+            color: #fff !important;
+        }
+        .btn-primary {
+            background: #0d6efd;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #0b5ed7;
+        }
+        .btn-success {
+            background: #20c997;
+            border: none;
+        }
+        .btn-success:hover {
+            background: #169c74;
+        }
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+        }
+        .btn-danger:hover {
+            background: #b02a37;
+        }
+        .btn-warning {
+            background: #fd7e14;
+            border: none;
+            color: #fff !important;
+        }
+        .btn-warning:hover {
+            background: #c75c00;
+        }
+        .division-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #fff;
+            background: #0d6efd;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+        }
+        .status-belum-dimulai { background-color: #adb5bd; }
+        .status-sedang-berjalan { background-color: #0d6efd; }
+        .status-selesai { background-color: #198754; }
+        .table {
+            font-size: 0.98em;
+            color: #212529;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+            color: #212529;
+        }
+        .table thead th {
+            background: #f8f9fa;
+            color: #212529;
+        }
+        .empty-state svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+            opacity: 0.2;
+        }
+        .empty-state p {
+            color: #adb5bd;
+        }
+        .app-header {
+            background: #00916e;
+            color: #fff;
+            border-radius: 0 0 2rem 2rem;
+            padding-bottom: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .app-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .app-header .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #00916e;
+            border: 3px solid #fff;
+        }
+        .app-header .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .app-header .user-role {
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+        .app-header .summary-card {
+            background: #eafaf3;
+            color: #212529;
+            border-radius: 1.2rem;
+            padding: 1.1rem 1.2rem;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .app-header .summary-icon {
+            background: #00916e22;
+            color: #00916e;
+            border-radius: 1rem;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .app-header .summary-label {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .app-header .summary-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .menu-grid {
+            margin-top: 1.2rem;
+            padding-bottom: 1.5rem;
+        }
+        .menu-grid .row {
+            --bs-gutter-x: 0.5rem;
+        }
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .menu-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 0.2rem;
+        }
+        .menu-label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #212529;
+        }
+        /* Pastel backgrounds for icons */
+        .bg-pastel-green { background: #eafaf3; color: #00916e; }
+        .bg-pastel-blue { background: #eaf1fb; color: #1976d2; }
+        .bg-pastel-purple { background: #f3eafd; color: #7c3aed; }
+        .bg-pastel-pink { background: #fdeaf4; color: #e64980; }
+        .bg-pastel-orange { background: #fff4e6; color: #fd7e14; }
+        .bg-pastel-yellow { background: #fffbe6; color: #f9c846; }
+        .bg-pastel-grey { background: #f1f3f4; color: #6c757d; }
+        .bg-pastel-teal { background: #e6f9fa; color: #20c997; }
+        .bg-pastel-red { background: #fdeaea; color: #dc3545; }
+        .bg-pastel-indigo { background: #eaeafd; color: #6366f1; }
+        /* Responsive grid */
+        @media (max-width: 768px) {
+            .menu-grid .col-3 { flex: 0 0 25%; max-width: 25%; }
+            .menu-label { font-size: 0.9rem; }
+        }
+        @media (max-width: 480px) {
+            .app-header { border-radius: 0 0 1.2rem 1.2rem; }
+            .menu-grid .col-3 { flex: 0 0 33.3333%; max-width: 33.3333%; }
+            .menu-label { font-size: 0.88rem; }
+            .menu-grid {
+                margin-top: 0.8rem;
+            }
+        }
+    </style>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="app-header p-4 pb-3">
+        <div class="user-info mb-2">
+            <div class="user-avatar">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            <div>
+                <div class="user-name">Manager Proker</div>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div>
+                <div class="summary-label">Total Anggaran</div>
+                <div class="summary-value" id="totalBudget">Rp 0</div>
+            </div>
+        </div>
+    </div>
+    <div class="container menu-grid">
+        <div class="row text-center">
+            <div class="col-4 menu-item">
+                <div class="menu-icon bg-pastel-green" onclick="openTambahModal()"><i class="bi bi-plus-circle"></i></div>
+                <div class="menu-label">Tambah Program</div>
+            </div>
+            <div class="col-4 menu-item">
+                <div class="menu-icon bg-pastel-blue" onclick="openDaftarModal()"><i class="bi bi-list-task"></i></div>
+                <div class="menu-label">Daftar Program</div>
+            </div>
+            <div class="col-4 menu-item">
+                <div class="menu-icon bg-pastel-yellow" onclick="openStatistikModal()"><i class="bi bi-bar-chart"></i></div>
+                <div class="menu-label">Statistik</div>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-4 menu-item">
+                <div class="menu-icon bg-pastel-teal" onclick="openRealisasiModal()"><i class="bi bi-clipboard-check"></i></div>
+                <div class="menu-label">Laporan Realisasi</div>
+            </div>
+            <div class="col-4 menu-item">
+                <div class="menu-icon bg-pastel-blue" onclick="openKalenderModal()"><i class="bi bi-calendar-event"></i></div>
+                <div class="menu-label">Kalender</div>
+            </div>
+            <div class="col-4 menu-item">
+                <div class="menu-icon bg-pastel-orange" onclick="openNotifikasiModal()"><i class="bi bi-bell"></i></div>
+                <div class="menu-label">Notifikasi</div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Tambah Program dan Statistik tetap, modal Daftar Program diperluas -->
+    <!-- Modal Daftar Program -->
+    <div class="modal fade" id="modalDaftar" tabindex="-1" aria-labelledby="modalDaftarLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDaftarLabel">Daftar Program Kerja</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-2 align-items-end mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Filter Divisi:</label>
+                <select id="filterDivision" class="form-select">
+                  <option value="">Semua Divisi</option>
+                  <option value="IT">IT</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Finance">Finance</option>
+                  <option value="HR">HR</option>
+                  <option value="Operations">Operations</option>
+                  <option value="R&D">R&D</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Filter Status:</label>
+                <select id="filterStatus" class="form-select">
+                  <option value="">Semua Status</option>
+                  <option value="Belum Dimulai">Belum Dimulai</option>
+                  <option value="Sedang Berjalan">Sedang Berjalan</option>
+                  <option value="Selesai">Selesai</option>
+                </select>
+              </div>
+              <div class="col-md-4 d-flex gap-2 flex-wrap mt-3 mt-md-0">
+                <button class="btn btn-success d-flex align-items-center gap-1" onclick="downloadExcel()">
+                  <span>📊</span>
+                  <span>Download Excel</span>
+                </button>
+                <button class="btn btn-danger d-flex align-items-center gap-1" onclick="openHapusModal()">
+                  <span>🗑️</span>
+                  <span>Hapus Data</span>
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="programTable" class="table table-striped align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Divisi</th>
+                    <th>Nama Program</th>
+                    <th>Anggaran</th>
+                    <th>Penanggung Jawab</th>
+                    <th>Status</th>
+                    <th>Deskripsi</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="programTableBody">
+                  <tr>
+                    <td colspan="7" class="empty-state text-center py-5">
+                      <svg viewBox="0 0 24 24" fill="currentColor" style="width:60px;height:60px;opacity:0.3;">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                      </svg>
+                      <p class="mt-3 text-muted">Belum ada program kerja yang ditambahkan</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Hapus Data (tetap, tapi hanya dipanggil dari modal daftar program) -->
+    <div class="modal fade" id="modalHapus" tabindex="-1" aria-labelledby="modalHapusLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalHapusLabel">Konfirmasi Hapus Semua Data</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Apakah Anda yakin ingin menghapus <b>SEMUA</b> data program kerja? Tindakan ini tidak dapat dibatalkan!</p>
+            <div class="d-flex gap-2 mt-3 flex-wrap">
+              <button type="button" class="btn btn-danger" onclick="clearAllData();var hapusModal = bootstrap.Modal.getInstance(document.getElementById('modalHapus'));hapusModal.hide();">Hapus Semua</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Statistik (placeholder) -->
+    <div class="modal fade" id="modalStatistik" tabindex="-1" aria-labelledby="modalStatistikLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalStatistikLabel">Statistik Program Kerja</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 mb-2">
+              <div class="col-4">
+                <div class="stat-card programs text-center p-2">
+                  <div class="stat-number h4 mb-0" id="totalPrograms">0</div>
+                  <div class="stat-label">Total Program</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="stat-card budget text-center p-2">
+                  <div class="stat-number h4 mb-0" id="totalBudgetStat">Rp 0</div>
+                  <div class="stat-label">Total Anggaran</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="stat-card divisions text-center p-2">
+                  <div class="stat-number h4 mb-0" id="totalDivisions">0</div>
+                  <div class="stat-label">Divisi Aktif</div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-4">
+                <div class="stat-card status-belum-dimulai text-center p-2">
+                  <div class="stat-number h4 mb-0" id="statusBelumDimulai">0</div>
+                  <div class="stat-label">Belum Dimulai</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="stat-card status-sedang-berjalan text-center p-2">
+                  <div class="stat-number h4 mb-0" id="statusSedangBerjalan">0</div>
+                  <div class="stat-label">Sedang Berjalan</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="stat-card status-selesai text-center p-2">
+                  <div class="stat-number h4 mb-0" id="statusSelesai">0</div>
+                  <div class="stat-label">Selesai</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Tambah Modal Bootstrap untuk setiap menu utama -->
+    <!-- Modal Tambah Program -->
+    <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTambahLabel">Tambah Program Kerja</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Form Tambah Program -->
+            <form id="programForm">
+              <div class="mb-3">
+                <label for="division" class="form-label">Divisi</label>
+                <select id="division" class="form-select" required>
+                  <option value="">Pilih Divisi</option>
+                  <option value="IT">IT</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Finance">Finance</option>
+                  <option value="HR">HR</option>
+                  <option value="Operations">Operations</option>
+                  <option value="R&D">R&D</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="programName" class="form-label">Nama Program</label>
+                <input type="text" id="programName" class="form-control" required placeholder="Masukkan nama program">
+              </div>
+              <div class="mb-3">
+                <label for="budget" class="form-label">Anggaran</label>
+                <input type="text" id="budget" class="form-control" required placeholder="Rp 0" oninput="formatBudgetInput(this)">
+              </div>
+              <div class="mb-3">
+                <label for="assignee" class="form-label">Penanggung Jawab</label>
+                <input type="text" id="assignee" class="form-control" required placeholder="Nama penanggung jawab">
+              </div>
+              <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select id="status" class="form-select" required>
+                  <option value="Belum Dimulai">Belum Dimulai</option>
+                  <option value="Sedang Berjalan">Sedang Berjalan</option>
+                  <option value="Selesai">Selesai</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">Deskripsi Program</label>
+                <textarea id="description" class="form-control" placeholder="Jelaskan detail program kerja"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="date" class="form-label">Tanggal Program</label>
+                <input type="date" id="date" class="form-control" required>
+              </div>
+              <div class="d-flex gap-2 mt-3 flex-wrap">
+                <button type="submit" class="btn btn-primary d-flex align-items-center gap-1">
+                  <span>💾</span>
+                  <span id="submitText">Tambah Program</span>
+                </button>
+                <button type="button" class="btn btn-warning d-flex align-items-center gap-1" id="cancelEdit" style="display:none;">
+                  <span>❌</span>
+                  <span>Batal Edit</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Laporan Realisasi -->
+    <div class="modal fade" id="modalRealisasi" tabindex="-1" aria-labelledby="modalRealisasiLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalRealisasiLabel">Laporan Realisasi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form class="mb-3">
+              <div class="row g-2">
+                <div class="col-md-4">
+                  <label class="form-label">Pilih Program</label>
+                  <select class="form-select">
+                    <option>Program A</option>
+                    <option>Program B</option>
+                    <option>Program C</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Realisasi (Rp)</label>
+                  <input type="number" class="form-control" placeholder="0">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Upload Bukti</label>
+                  <input type="file" class="form-control">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                  <button type="submit" class="btn btn-success w-100">Tambah</button>
+                </div>
+              </div>
+              <div class="mt-2">
+                <label class="form-label">Catatan</label>
+                <input type="text" class="form-control" placeholder="Catatan realisasi (opsional)">
+              </div>
+            </form>
+            <div class="table-responsive">
+              <table class="table table-sm table-striped">
+                <thead>
+                  <tr>
+                    <th>Program</th>
+                    <th>Realisasi</th>
+                    <th>Bukti</th>
+                    <th>Catatan</th>
+                    <th>Tanggal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Program A</td><td>Rp 1.000.000</td><td><a href="#">Lihat</a></td><td>Sudah cair</td><td>2024-06-01</td></tr>
+                  <tr><td>Program B</td><td>Rp 500.000</td><td><a href="#">Lihat</a></td><td>-</td><td>2024-06-02</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Kalender -->
+    <div class="modal fade" id="modalKalender" tabindex="-1" aria-labelledby="modalKalenderLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalKalenderLabel">Kalender Program Kerja</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Program A
+                <span class="badge bg-primary rounded-pill">2024-06-10</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Program B
+                <span class="badge bg-primary rounded-pill">2024-06-15</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Program C
+                <span class="badge bg-primary rounded-pill">2024-06-20</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Notifikasi -->
+    <div class="modal fade" id="modalNotifikasi" tabindex="-1" aria-labelledby="modalNotifikasiLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalNotifikasiLabel">Notifikasi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group">
+              <li class="list-group-item">
+                <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                <b>Program A</b> mendekati deadline (10 Juni 2024)
+              </li>
+              <li class="list-group-item">
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                <b>Program B</b> belum ada realisasi anggaran
+              </li>
+              <li class="list-group-item">
+                <i class="bi bi-check-circle text-success me-2"></i>
+                <b>Program C</b> sudah selesai
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+        function openTambahModal() {
+            var modal = new bootstrap.Modal(document.getElementById('modalTambah'));
+            modal.show();
+        }
+        function openDaftarModal() {
+            var modal = new bootstrap.Modal(document.getElementById('modalDaftar'));
+            modal.show();
+        }
+        function openStatistikModal() {
+            var modal = new bootstrap.Modal(document.getElementById('modalStatistik'));
+            modal.show();
+        }
+        function openHapusModal() {
+            var modal = new bootstrap.Modal(document.getElementById('modalHapus'));
+            modal.show();
+        }
+        // Helper: format tanggal
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        // Populate dropdown program di modal realisasi
+        function populateRealisasiDropdown() {
+            const select = document.querySelector('#modalRealisasi select.form-select');
+            select.innerHTML = programs.map(p => `<option value="${p.id}">${p.division} - ${p.programName}</option>`).join('');
+        }
+        // Populate tabel realisasi (dummy: tampilkan semua program, realisasi = budget, bukti/link dummy)
+        function populateRealisasiTable() {
+            const tbody = document.querySelector('#modalRealisasi tbody');
+            if (!programs.length) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Belum ada data realisasi</td></tr>';
+                return;
+            }
+            tbody.innerHTML = programs.map(p => `
+                <tr>
+                    <td>${p.programName}</td>
+                    <td>Rp ${p.budget.toLocaleString('id-ID')}</td>
+                    <td><a href="#">Lihat</a></td>
+                    <td>-</td>
+                    <td>${formatDate(p.date)}</td>
+                </tr>
+            `).join('');
+        }
+        // Populate kalender
+        function populateKalender() {
+            const ul = document.querySelector('#modalKalender ul.list-group');
+            if (!programs.length) {
+                ul.innerHTML = '<li class="list-group-item text-center text-muted">Belum ada program kerja</li>';
+                return;
+            }
+            // Urutkan berdasarkan tanggal
+            const sorted = [...programs].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+            ul.innerHTML = sorted.map(p => `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${p.programName}
+                    <span class="badge bg-primary rounded-pill">${formatDate(p.date)}</span>
+                </li>
+            `).join('');
+        }
+        // Populate notifikasi
+        function populateNotifikasi() {
+            const ul = document.querySelector('#modalNotifikasi ul.list-group');
+            if (!programs.length) {
+                ul.innerHTML = '<li class="list-group-item text-center text-muted">Tidak ada notifikasi</li>';
+                return;
+            }
+            const today = new Date();
+            let notif = [];
+            programs.forEach(p => {
+                if (!p.date) return;
+                const progDate = new Date(p.date);
+                const diff = Math.ceil((progDate - today) / (1000*60*60*24));
+                if (p.status !== 'Selesai' && diff >= 0 && diff <= 7) {
+                    notif.push(`<li class="list-group-item"><i class="bi bi-exclamation-circle text-warning me-2"></i><b>${p.programName}</b> mendekati deadline (${formatDate(p.date)})</li>`);
+                }
+                if (p.status === 'Belum Dimulai') {
+                    notif.push(`<li class="list-group-item"><i class="bi bi-info-circle text-primary me-2"></i><b>${p.programName}</b> belum dimulai</li>`);
+                }
+                if (p.status === 'Selesai') {
+                    notif.push(`<li class="list-group-item"><i class="bi bi-check-circle text-success me-2"></i><b>${p.programName}</b> sudah selesai</li>`);
+                }
+            });
+            ul.innerHTML = notif.length ? notif.join('') : '<li class="list-group-item text-center text-muted">Tidak ada notifikasi</li>';
+        }
+        // Show modal dan populate data
+        function openRealisasiModal() {
+            populateRealisasiDropdown();
+            populateRealisasiTable();
+            var modal = new bootstrap.Modal(document.getElementById('modalRealisasi'));
+            modal.show();
+        }
+        function openKalenderModal() {
+            populateKalender();
+            var modal = new bootstrap.Modal(document.getElementById('modalKalender'));
+            modal.show();
+        }
+        function openNotifikasiModal() {
+            populateNotifikasi();
+            var modal = new bootstrap.Modal(document.getElementById('modalNotifikasi'));
+            modal.show();
+        }
+    </script>
+    <div class="container py-3">
+        <div id="statsSection"></div>
+        <div id="formSection"></div>
+        <div id="tableSection"></div>
+    </div>
+    <script>
+        function scrollToForm() {
+            document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        function scrollToTable() {
+            document.getElementById('tableSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        function scrollToStats() {
+            document.getElementById('statsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+        // === Firebase Config (ISI DENGAN DATA KAMU) ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyAc-LNgx9wkE4DsO4e3WBl0wrZF4IejvcU",
+            authDomain: "prokerm-73988.firebaseapp.com",
+            databaseURL: "https://prokerm-73988-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "prokerm-73988",
+            storageBucket: "prokerm-73988.firebasestorage.app",
+            messagingSenderId: "637740385914",
+            appId: "1:637740385914:web:8a9282396a9dd550839dc3"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let programs = [];
+        let editingId = null;
+        let filteredProgramsData = []; // Global variable to store filtered programs
+
+        // Format budget input with Rp and thousands separator
+        function formatBudgetInput(input) {
+            let value = input.value;
+            value = value.replace(/[^\d]/g, ''); // Remove all non-digit characters
+            
+            if (value === '') {
+                input.value = '';
+                return;
+            }
+            
+            const formatted = parseInt(value).toLocaleString('id-ID');
+            input.value = 'Rp ' + formatted;
+        }
+
+        // Parse budget value to number
+        function parseBudget(budgetString) {
+            if (!budgetString) return 0;
+            return parseInt(budgetString.replace(/[^\d]/g, '')) || 0;
+        }
+
+        // Load data from Firebase Realtime Database
+        function loadData() {
+            db.ref('programKerjaData').on('value', (snapshot) => {
+                programs = snapshot.val() || [];
+                updateDisplay();
+                updateStats();
+            });
+        }
+
+        // Save data to Firebase Realtime Database
+        function saveData() {
+            db.ref('programKerjaData').set(programs);
+        }
+
+        // Initialize the application
+        function init() {
+            loadData();
+            setupEventListeners();
+            updateStats();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('programForm').addEventListener('submit', handleSubmit);
+            document.getElementById('cancelEdit').addEventListener('click', cancelEdit);
+            document.getElementById('filterDivision').addEventListener('change', filterPrograms);
+            document.getElementById('filterStatus').addEventListener('change', filterPrograms); // Event listener untuk filter status baru
+        }
+
+        // Handle form submission
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {
+                division: document.getElementById('division').value,
+                programName: document.getElementById('programName').value,
+                budget: parseBudget(document.getElementById('budget').value),
+                assignee: document.getElementById('assignee').value,
+                status: document.getElementById('status').value, // Ambil nilai status
+                description: document.getElementById('description').value,
+                date: document.getElementById('date').value // simpan tanggal
+            };
+
+            if (editingId !== null) {
+                // Update existing program
+                const index = programs.findIndex(p => p.id === editingId);
+                if (index !== -1) {
+                    programs[index] = { ...formData, id: editingId };
+                }
+                editingId = null;
+                document.getElementById('formTitle').textContent = 'Tambah Program Kerja Baru';
+                document.getElementById('submitText').textContent = 'Tambah Program';
+                document.getElementById('cancelEdit').style.display = 'none';
+            } else {
+                // Add new program
+                const newProgram = {
+                    ...formData,
+                    id: Date.now()
+                };
+                programs.push(newProgram);
+            }
+
+            saveData();
+            updateDisplay();
+            updateStats();
+            document.getElementById('programForm').reset();
+            document.getElementById('status').value = 'Belum Dimulai'; // Reset status ke default
+        }
+
+        // Update display and filter data
+        function updateDisplay() {
+            const tableBody = document.getElementById('programTableBody');
+            const filterDivision = document.getElementById('filterDivision').value;
+            const filterStatus = document.getElementById('filterStatus').value; // Ambil nilai filter status
+            
+            let currentPrograms = programs; // Start with all programs
+
+            // Apply division filter
+            if (filterDivision) {
+                currentPrograms = currentPrograms.filter(p => p.division === filterDivision);
+            }
+
+            // Apply status filter
+            if (filterStatus) {
+                currentPrograms = currentPrograms.filter(p => p.status === filterStatus);
+            }
+
+            // Store the filtered data globally for download/delete functions
+            filteredProgramsData = currentPrograms;
+
+            if (filteredProgramsData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state text-center py-5">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width:60px;height:60px;opacity:0.3;">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                            <p class="mt-3 text-muted">Belum ada program kerja yang ditambahkan</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = filteredProgramsData.map(program => `
+                <tr>
+                    <td><span class="division-badge">${program.division}</span></td>
+                    <td><strong>${program.programName}</strong></td>
+                    <td class="currency">${formatCurrency(program.budget)}</td>
+                    <td>${program.assignee}</td>
+                    <td><span class="status-badge status-${program.status.toLowerCase().replace(/\s/g, '-') /* class for styling */}">${program.status}</span></td> <td>${program.description || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-warning btn-small" onclick="editProgram(${program.id})">
+                                <span>✏️</span>
+                                <span>Edit</span>
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deleteProgram(${program.id})">
+                                <span>🗑️</span>
+                                <span>Hapus</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Edit program
+        function editProgram(id) {
+            const program = programs.find(p => p.id === id);
+            if (!program) return;
+
+            document.getElementById('division').value = program.division;
+            document.getElementById('programName').value = program.programName;
+            document.getElementById('budget').value = 'Rp ' + program.budget.toLocaleString('id-ID');
+            document.getElementById('assignee').value = program.assignee;
+            document.getElementById('status').value = program.status; // Set nilai status untuk diedit
+            document.getElementById('description').value = program.description;
+            document.getElementById('date').value = program.date; // Set nilai tanggal untuk diedit
+
+            editingId = id;
+            document.getElementById('formTitle').textContent = 'Edit Program Kerja';
+            document.getElementById('submitText').textContent = 'Update Program';
+            document.getElementById('cancelEdit').style.display = 'inline-flex';
+
+            // Scroll to form
+            document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cancel edit
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('formTitle').textContent = 'Tambah Program Kerja Baru';
+            document.getElementById('submitText').textContent = 'Tambah Program';
+            document.getElementById('cancelEdit').style.display = 'none';
+            document.getElementById('programForm').reset();
+            document.getElementById('status').value = 'Belum Dimulai'; // Reset status ke default
+        }
+
+        // Delete individual program
+        function deleteProgram(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus program ini?')) {
+                programs = programs.filter(p => p.id !== id);
+                saveData();
+                updateDisplay();
+                updateStats();
+            }
+        }
+
+        // Filter programs (triggered by select change)
+        function filterPrograms() {
+            updateDisplay();
+            updateStats(); // Update stats based on filtered data
+        }
+
+        // Update statistics (now reflects filtered view if filter is active)
+        function updateStats() {
+            const totalPrograms = programs.length; // Still show total programs overall
+            const totalBudget = programs.reduce((sum, p) => sum + p.budget, 0); // Still show total budget overall
+            
+            // Count unique divisions based on all programs
+            const uniqueDivisions = new Set(programs.map(p => p.division)).size;
+
+            // Count programs by status
+            const statusCounts = programs.reduce((acc, p) => {
+                acc[p.status] = (acc[p.status] || 0) + 1;
+                return acc;
+            }, {});
+
+            document.getElementById('totalPrograms').textContent = totalPrograms;
+            document.getElementById('totalBudget').textContent = formatCurrency(totalBudget);
+            document.getElementById('totalDivisions').textContent = uniqueDivisions;
+            document.getElementById('statusBelumDimulai').textContent = statusCounts['Belum Dimulai'] || 0;
+            document.getElementById('statusSedangBerjalan').textContent = statusCounts['Sedang Berjalan'] || 0;
+            document.getElementById('statusSelesai').textContent = statusCounts['Selesai'] || 0;
+        }
+
+
+        // Download Excel - uses filteredProgramsData
+        function downloadExcel() {
+            if (filteredProgramsData.length === 0) {
+                alert('Tidak ada data yang difilter untuk diunduh ke Excel.');
+                return;
+            }
+
+            const worksheet = XLSX.utils.json_to_sheet(filteredProgramsData.map(p => ({
+                'Divisi': p.division,
+                'Nama Program': p.programName,
+                'Anggaran': p.budget,
+                'Penanggung Jawab': p.assignee,
+                'Status': p.status, // Tambahkan status ke Excel
+                'Deskripsi': p.description || '',
+                'Tanggal': p.date // Tambahkan tanggal ke Excel
+            })));
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Program Kerja Filtered');
+            
+            const filterDivText = document.getElementById('filterDivision').value ? `_${document.getElementById('filterDivision').value}` : '';
+            const filterStatText = document.getElementById('filterStatus').value ? `_${document.getElementById('filterStatus').value.replace(/\s/g, '')}` : '';
+            const fileName = `program_kerja${filterDivText}${filterStatText}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+            alert('Data yang difilter berhasil diunduh ke Excel!');
+        }
+
+        // Download PDF - uses filteredProgramsData
+        function downloadPDF() {
+            if (filteredProgramsData.length === 0) {
+                alert('Tidak ada data yang difilter untuk diunduh ke PDF.');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const filterDivText = document.getElementById('filterDivision').value ? ` (Divisi: ${document.getElementById('filterDivision').value})` : '';
+            const filterStatText = document.getElementById('filterStatus').value ? ` (Status: ${document.getElementById('filterStatus').value})` : '';
+
+            doc.setFontSize(20);
+            doc.text(`Program Kerja${filterDivText}${filterStatText}`, 20, 20);
+
+            doc.setFontSize(12);
+            doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, 20, 35);
+
+            let y = 50;
+            
+            const tableRows = [];
+
+            filteredProgramsData.forEach(program => {
+                const programData = [
+                    program.division,
+                    program.programName,
+                    formatCurrency(program.budget),
+                    program.assignee,
+                    program.status, // Tambahkan status ke PDF
+                    program.description || '-',
+                    program.date // Tambahkan tanggal ke PDF
+                ];
+                tableRows.push(programData);
+            });
+
+            // Manual content generation
+            doc.setFontSize(10);
+            tableRows.forEach(row => {
+                if (y > 270) { // Check for page overflow
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.text(`Divisi: ${row[0]}`, 20, y);
+                doc.text(`Program: ${row[1]}`, 20, y + 5);
+                doc.text(`Anggaran: ${row[2]}`, 20, y + 10);
+                doc.text(`Penanggung Jawab: ${row[3]}`, 20, y + 15);
+                doc.text(`Status: ${row[4]}`, 20, y + 20); // Tampilkan Status
+                doc.text(`Deskripsi: ${row[5]}`, 20, y + 25);
+                doc.text(`Tanggal: ${row[6]}`, 20, y + 30); // Tampilkan Tanggal
+                y += 35; // Increment y for the next program (adjusted for new field)
+            });
+
+
+            const fileName = `program_kerja${filterDivText}${filterStatText}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+            alert('Data yang difilter berhasil diunduh ke PDF!');
+        }
+
+        // Clear only filtered data (now considers both division and status filters)
+        function clearFilteredData() {
+            const filterDivision = document.getElementById('filterDivision').value;
+            const filterStatus = document.getElementById('filterStatus').value;
+
+            if (!filterDivision && !filterStatus) {
+                alert('Pilih divisi atau status terlebih dahulu untuk menggunakan fitur "Hapus Filtered". Jika ingin menghapus semua data, gunakan tombol "Hapus Semua".');
+                return;
+            }
+
+            let confirmMessage = 'Apakah Anda yakin ingin menghapus SEMUA program kerja ';
+            if (filterDivision && filterStatus) {
+                confirmMessage += `dari divisi "${filterDivision}" dengan status "${filterStatus}"?`;
+            } else if (filterDivision) {
+                confirmMessage += `dari divisi "${filterDivision}"?`;
+            } else if (filterStatus) {
+                confirmMessage += `dengan status "${filterStatus}"?`;
+            }
+            confirmMessage += ' Tindakan ini tidak dapat dibatalkan!';
+
+            if (confirm(confirmMessage)) {
+                // Filter out the programs that DO NOT match the current filters
+                programs = programs.filter(p => {
+                    const matchDivision = filterDivision ? p.division === filterDivision : true;
+                    const matchStatus = filterStatus ? p.status === filterStatus : true;
+                    return !(matchDivision && matchStatus);
+                });
+                saveData();
+                updateDisplay();
+                updateStats();
+                alert('Data yang difilter berhasil dihapus!');
+            }
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data program kerja? Tindakan ini tidak dapat dibatalkan!')) {
+                programs = [];
+                saveData();
+                updateDisplay();
+                updateStats();
+                alert('Semua data berhasil dihapus!');
+            }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
